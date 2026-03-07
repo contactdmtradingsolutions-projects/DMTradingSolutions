@@ -1,5 +1,6 @@
 import React from 'react';
 import { Globe, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -16,38 +17,29 @@ export default function Footer() {
             <p className="text-sm leading-relaxed mb-6">
               Your trusted African procurement and sourcing partner, specializing in cross-border trade, supplier sourcing, and logistics coordination between South Africa and the DRC.
             </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-corporate-gold transition-colors">
-                <Linkedin className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-corporate-gold transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-corporate-gold transition-colors">
-                <Facebook className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           <div>
             <h4 className="text-white font-heading font-bold text-lg mb-6">Quick Links</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#home" className="hover:text-corporate-gold transition-colors">Home</a></li>
-              <li><a href="#about" className="hover:text-corporate-gold transition-colors">About Us</a></li>
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Our Services</a></li>
-              <li><a href="#industries" className="hover:text-corporate-gold transition-colors">Industries Served</a></li>
-              <li><a href="#markets" className="hover:text-corporate-gold transition-colors">Our Markets</a></li>
+              <li><Link to="/" className="hover:text-corporate-gold transition-colors">Home</Link></li>
+              <li><Link to="/about" className="hover:text-corporate-gold transition-colors">About Us</Link></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Our Services</Link></li>
+              <li><Link to="/industries" className="hover:text-corporate-gold transition-colors">Industries Served</Link></li>
+              <li><Link to="/markets" className="hover:text-corporate-gold transition-colors">Our Markets</Link></li>
+              <li><Link to="/blog" className="hover:text-corporate-gold transition-colors">Blog</Link></li>
+              <li><Link to="/contact" className="hover:text-corporate-gold transition-colors">Contact</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-heading font-bold text-lg mb-6">Our Services</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Procurement Services Africa</a></li>
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Product Sourcing</a></li>
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Import & Export Services</a></li>
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Supplier Verification</a></li>
-              <li><a href="#services" className="hover:text-corporate-gold transition-colors">Logistics Coordination</a></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Procurement Services Africa</Link></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Product Sourcing</Link></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Import & Export Services</Link></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Supplier Verification</Link></li>
+              <li><Link to="/services" className="hover:text-corporate-gold transition-colors">Logistics Coordination</Link></li>
             </ul>
           </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function WhyChooseUs() {
   const reasons = [
@@ -69,12 +70,12 @@ export default function WhyChooseUs() {
             </div>
 
             <div className="mt-10">
-              <a
-                href="#contact"
+              <Link
+                to="/contact"
                 className="inline-block bg-corporate-navy text-white px-8 py-4 rounded-sm font-semibold text-lg hover:bg-corporate-blue transition-colors"
               >
                 Contact Our Team
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

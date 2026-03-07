@@ -75,7 +75,41 @@ export default function QuoteForm() {
                 </div>
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
-                  <input type="text" id="country" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="e.g. DRC" />
+                  <select id="country" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow bg-white">
+                    <option value="">Select a country</option>
+                    <optgroup label="Africa">
+                      <option value="South Africa">South Africa</option>
+                      <option value="Democratic Republic of the Congo">Democratic Republic of the Congo</option>
+                      <option value="Angola">Angola</option>
+                      <option value="Botswana">Botswana</option>
+                      <option value="Egypt">Egypt</option>
+                      <option value="Ghana">Ghana</option>
+                      <option value="Kenya">Kenya</option>
+                      <option value="Morocco">Morocco</option>
+                      <option value="Mozambique">Mozambique</option>
+                      <option value="Namibia">Namibia</option>
+                      <option value="Nigeria">Nigeria</option>
+                      <option value="Rwanda">Rwanda</option>
+                      <option value="Tanzania">Tanzania</option>
+                      <option value="Uganda">Uganda</option>
+                      <option value="Zambia">Zambia</option>
+                      <option value="Zimbabwe">Zimbabwe</option>
+                    </optgroup>
+                    <optgroup label="Global">
+                      <option value="Australia">Australia</option>
+                      <option value="Brazil">Brazil</option>
+                      <option value="Canada">Canada</option>
+                      <option value="China">China</option>
+                      <option value="France">France</option>
+                      <option value="Germany">Germany</option>
+                      <option value="India">India</option>
+                      <option value="Japan">Japan</option>
+                      <option value="United Arab Emirates">United Arab Emirates</option>
+                      <option value="United Kingdom">United Kingdom</option>
+                      <option value="United States">United States</option>
+                      <option value="Other">Other</option>
+                    </optgroup>
+                  </select>
                 </div>
               </div>
 

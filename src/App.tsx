@@ -4,32 +4,41 @@
  */
 
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import About from './components/About';
-import Services from './components/Services';
-import Industries from './components/Industries';
-import WhyChooseUs from './components/WhyChooseUs';
-import Markets from './components/Markets';
-import QuoteForm from './components/QuoteForm';
-import Contact from './components/Contact';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+import Home from './pages/Home';
+import AboutPage from './pages/AboutPage';
+import ServicesPage from './pages/ServicesPage';
+import IndustriesPage from './pages/IndustriesPage';
+import MarketsPage from './pages/MarketsPage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
+import ContactPage from './pages/ContactPage';
+import QuotePage from './pages/QuotePage';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-corporate-light font-sans text-gray-900 selection:bg-corporate-gold selection:text-corporate-navy">
-      <Navbar />
-      <main>
-        <Hero />
-        <About />
-        <Services />
-        <Industries />
-        <WhyChooseUs />
-        <Markets />
-        <QuoteForm />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <ScrollToTop />
+      <div className="min-h-screen bg-corporate-light font-sans text-gray-900 selection:bg-corporate-gold selection:text-corporate-navy">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/industries" element={<IndustriesPage />} />
+            <Route path="/markets" element={<MarketsPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:id" element={<BlogPostPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/quote" element={<QuotePage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
 }
