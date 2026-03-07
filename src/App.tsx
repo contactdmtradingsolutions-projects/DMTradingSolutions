@@ -18,6 +18,8 @@ import BlogPostPage from './pages/BlogPostPage';
 import ContactPage from './pages/ContactPage';
 import QuotePage from './pages/QuotePage';
 import AdminPage from './pages/AdminPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 import WhatsAppButton from './components/WhatsAppButton';
 
 export default function App() {
@@ -38,6 +40,8 @@ export default function App() {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/quote" element={<QuotePage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
           </Routes>
         </main>
         <Footer />

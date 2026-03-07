@@ -12,7 +12,7 @@ export default function AdminPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Tabs State
-  const [activeTab, setActiveTab] = useState<'home' | 'about' | 'services'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'about' | 'services' | 'industries' | 'markets' | 'contact' | 'blog'>('home');
 
   // Home Page Content State
   const [homeTitle, setHomeTitle] = useState('');
@@ -29,6 +29,25 @@ export default function AdminPage() {
   const [servicesTitle, setServicesTitle] = useState('');
   const [servicesDescription, setServicesDescription] = useState('');
   const [servicesImage, setServicesImage] = useState('');
+
+  // Industries Page Content State
+  const [industriesTitle, setIndustriesTitle] = useState('');
+  const [industriesDescription, setIndustriesDescription] = useState('');
+  const [industriesImage, setIndustriesImage] = useState('');
+
+  // Markets Page Content State
+  const [marketsTitle, setMarketsTitle] = useState('');
+  const [marketsDescription, setMarketsDescription] = useState('');
+  const [marketsImage, setMarketsImage] = useState('');
+
+  // Contact Page Content State
+  const [contactTitle, setContactTitle] = useState('');
+  const [contactDescription, setContactDescription] = useState('');
+
+  // Blog Page Content State
+  const [blogTitle, setBlogTitle] = useState('');
+  const [blogSubtitle, setBlogSubtitle] = useState('');
+  const [blogImage, setBlogImage] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -69,6 +88,41 @@ export default function AdminPage() {
         setServicesTitle(data.title || '');
         setServicesDescription(data.description || '');
         setServicesImage(data.image || '');
+      }
+
+      // Fetch Industries
+      const industriesDoc = await getDoc(doc(db, 'content', 'industries'));
+      if (industriesDoc.exists()) {
+        const data = industriesDoc.data();
+        setIndustriesTitle(data.title || '');
+        setIndustriesDescription(data.description || '');
+        setIndustriesImage(data.image || '');
+      }
+
+      // Fetch Markets
+      const marketsDoc = await getDoc(doc(db, 'content', 'markets'));
+      if (marketsDoc.exists()) {
+        const data = marketsDoc.data();
+        setMarketsTitle(data.title || '');
+        setMarketsDescription(data.description || '');
+        setMarketsImage(data.image || '');
+      }
+
+      // Fetch Contact
+      const contactDoc = await getDoc(doc(db, 'content', 'contact'));
+      if (contactDoc.exists()) {
+        const data = contactDoc.data();
+        setContactTitle(data.title || '');
+        setContactDescription(data.description || '');
+      }
+
+      // Fetch Blog
+      const blogDoc = await getDoc(doc(db, 'content', 'blog'));
+      if (blogDoc.exists()) {
+        const data = blogDoc.data();
+        setBlogTitle(data.title || '');
+        setBlogSubtitle(data.subtitle || '');
+        setBlogImage(data.image || '');
       }
     } catch (err: any) {
       console.error("Error fetching content:", err);
@@ -125,6 +179,33 @@ export default function AdminPage() {
           image: servicesImage
         }, { merge: true });
         setSuccess("Services page content saved successfully!");
+      } else if (activeTab === 'industries') {
+        await setDoc(doc(db, 'content', 'industries'), {
+          title: industriesTitle,
+          description: industriesDescription,
+          image: industriesImage
+        }, { merge: true });
+        setSuccess("Industries page content saved successfully!");
+      } else if (activeTab === 'markets') {
+        await setDoc(doc(db, 'content', 'markets'), {
+          title: marketsTitle,
+          description: marketsDescription,
+          image: marketsImage
+        }, { merge: true });
+        setSuccess("Markets page content saved successfully!");
+      } else if (activeTab === 'contact') {
+        await setDoc(doc(db, 'content', 'contact'), {
+          title: contactTitle,
+          description: contactDescription
+        }, { merge: true });
+        setSuccess("Contact page content saved successfully!");
+      } else if (activeTab === 'blog') {
+        await setDoc(doc(db, 'content', 'blog'), {
+          title: blogTitle,
+          subtitle: blogSubtitle,
+          image: blogImage
+        }, { merge: true });
+        setSuccess("Blog page content saved successfully!");
       }
       
       setTimeout(() => setSuccess(null), 3000);
@@ -210,44 +291,35 @@ export default function AdminPage() {
           </div>
         )}
 
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex" aria-label="Tabs">
-              <button
-                onClick={() => setActiveTab('home')}
-                className={`${
-                  activeTab === 'home'
-                    ? 'border-corporate-gold text-corporate-navy'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
-              >
-                Home Page
-              </button>
-              <button
-                onClick={() => setActiveTab('about')}
-                className={`${
-                  activeTab === 'about'
-                    ? 'border-corporate-gold text-corporate-navy'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
-              >
-                About Us
-              </button>
-              <button
-                onClick={() => setActiveTab('services')}
-                className={`${
-                  activeTab === 'services'
-                    ? 'border-corporate-gold text-corporate-navy'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
-              >
-                Services
-              </button>
+        <div className="bg-white shadow rounded-lg overflow-hidden flex flex-col md:flex-row min-h-[600px]">
+          <div className="w-full md:w-64 bg-gray-50 border-r border-gray-200 flex-shrink-0">
+            <nav className="flex flex-col p-4 space-y-1" aria-label="Sidebar">
+              {[
+                { id: 'home', label: 'Home Page' },
+                { id: 'about', label: 'About Us' },
+                { id: 'services', label: 'Services' },
+                { id: 'industries', label: 'Industries' },
+                { id: 'markets', label: 'Markets' },
+                { id: 'blog', label: 'Blog' },
+                { id: 'contact', label: 'Contact' },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`${
+                    activeTab === tab.id
+                      ? 'bg-corporate-gold/10 text-corporate-navy border-r-4 border-corporate-gold font-bold'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 border-r-4 border-transparent'
+                  } w-full text-left px-4 py-3 rounded-l-md text-sm transition-colors`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </nav>
           </div>
 
-          <div className="px-4 py-5 sm:p-6">
-            <form onSubmit={handleSave} className="space-y-6">
+          <div className="flex-1 p-6 md:p-8">
+            <form onSubmit={handleSave} className="space-y-6 max-w-3xl">
               
               {activeTab === 'home' && (
                 <>
@@ -421,6 +493,202 @@ export default function AdminPage() {
                         className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
                         value={servicesImage}
                         onChange={(e) => setServicesImage(e.target.value)}
+                        placeholder="https://images.unsplash.com/..."
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'industries' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Industries Content</h2>
+                  <div>
+                    <label htmlFor="industriesTitle" className="block text-sm font-medium text-gray-700">
+                      Section Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="industriesTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={industriesTitle}
+                        onChange={(e) => setIndustriesTitle(e.target.value)}
+                        placeholder="Specialized Sourcing & Procurement for Key African Sectors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="industriesDescription" className="block text-sm font-medium text-gray-700">
+                      Main Description
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="industriesDescription"
+                        rows={6}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={industriesDescription}
+                        onChange={(e) => setIndustriesDescription(e.target.value)}
+                        placeholder="We deeply understand the unique logistical challenges..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="industriesImage" className="block text-sm font-medium text-gray-700">
+                      Side Image (URL)
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="url"
+                        id="industriesImage"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={industriesImage}
+                        onChange={(e) => setIndustriesImage(e.target.value)}
+                        placeholder="https://images.pexels.com/..."
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'markets' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Markets Content</h2>
+                  <div>
+                    <label htmlFor="marketsTitle" className="block text-sm font-medium text-gray-700">
+                      Section Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="marketsTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={marketsTitle}
+                        onChange={(e) => setMarketsTitle(e.target.value)}
+                        placeholder="Connecting Key African Economies"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="marketsDescription" className="block text-sm font-medium text-gray-700">
+                      Main Description
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="marketsDescription"
+                        rows={6}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={marketsDescription}
+                        onChange={(e) => setMarketsDescription(e.target.value)}
+                        placeholder="We specialize in facilitating trade corridors that drive growth..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="marketsImage" className="block text-sm font-medium text-gray-700">
+                      Side Image (URL)
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="url"
+                        id="marketsImage"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={marketsImage}
+                        onChange={(e) => setMarketsImage(e.target.value)}
+                        placeholder="https://images.unsplash.com/..."
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'contact' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Contact Content</h2>
+                  <div>
+                    <label htmlFor="contactTitle" className="block text-sm font-medium text-gray-700">
+                      Section Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="contactTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={contactTitle}
+                        onChange={(e) => setContactTitle(e.target.value)}
+                        placeholder="Get in Touch with Our Team"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="contactDescription" className="block text-sm font-medium text-gray-700">
+                      Main Description
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="contactDescription"
+                        rows={6}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={contactDescription}
+                        onChange={(e) => setContactDescription(e.target.value)}
+                        placeholder="Ready to optimize your African supply chain..."
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'blog' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Blog Page Content</h2>
+                  <div>
+                    <label htmlFor="blogTitle" className="block text-sm font-medium text-gray-700">
+                      Hero Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="blogTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={blogTitle}
+                        onChange={(e) => setBlogTitle(e.target.value)}
+                        placeholder="Industry Insights"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="blogSubtitle" className="block text-sm font-medium text-gray-700">
+                      Hero Subtitle
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="blogSubtitle"
+                        rows={3}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={blogSubtitle}
+                        onChange={(e) => setBlogSubtitle(e.target.value)}
+                        placeholder="Expert advice, news, and insights..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="blogImage" className="block text-sm font-medium text-gray-700">
+                      Hero Image (URL)
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="url"
+                        id="blogImage"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={blogImage}
+                        onChange={(e) => setBlogImage(e.target.value)}
                         placeholder="https://images.unsplash.com/..."
                       />
                     </div>

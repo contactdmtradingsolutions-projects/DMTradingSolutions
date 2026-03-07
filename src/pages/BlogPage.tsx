@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHero from '../components/PageHero';
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export const blogPosts = [
   {
@@ -80,12 +82,29 @@ export const blogPosts = [
 ];
 
 export default function BlogPage() {
+  const [title, setTitle] = useState('Industry Insights');
+  const [subtitle, setSubtitle] = useState('Expert advice, news, and insights on procurement and sourcing in Africa.');
+  const [image, setImage] = useState('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop');
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'content', 'blog'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.title) setTitle(data.title);
+        if (data.subtitle) setSubtitle(data.subtitle);
+        if (data.image) setImage(data.image);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <>
       <PageHero 
-        title="Industry Insights" 
-        subtitle="Expert advice, news, and insights on procurement and sourcing in Africa."
-        image="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop"
+        title={title} 
+        subtitle={subtitle}
+        image={image}
       />
       
       <section className="py-24 bg-corporate-light">

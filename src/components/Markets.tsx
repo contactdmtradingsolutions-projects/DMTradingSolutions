@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { MapPin } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Markets() {
+  const [title, setTitle] = useState('Connecting Key African Economies');
+  const [description, setDescription] = useState('We specialize in facilitating trade corridors that drive growth, focusing on reliable sourcing from South Africa to the DRC and beyond.');
+  const [image, setImage] = useState('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop');
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'content', 'markets'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.title) setTitle(data.title);
+        if (data.description) setDescription(data.description);
+        if (data.image) setImage(data.image);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const markets = [
     { name: 'South Africa', description: 'Our headquarters and primary sourcing hub for high-quality industrial and commercial goods.' },
     { name: 'Democratic Republic of the Congo', description: 'Our specialized destination market with deep logistical expertise and established trade routes.' },
@@ -16,7 +35,7 @@ export default function Markets() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16 items-center">
           <div className="lg:col-span-5">
             <img 
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2074&auto=format&fit=crop" 
+              src={image} 
               alt="African Markets Map" 
               className="w-full h-auto rounded-sm shadow-xl object-cover"
               referrerPolicy="no-referrer"
@@ -30,10 +49,10 @@ export default function Markets() {
               </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-corporate-navy mb-6">
-              Connecting Key African Economies
+              {title}
             </h2>
             <p className="text-gray-600 text-lg mb-8">
-              We specialize in facilitating trade corridors that drive growth, focusing on reliable sourcing from South Africa to the DRC and beyond.
+              {description}
             </p>
             
             {/* SEO Content */}

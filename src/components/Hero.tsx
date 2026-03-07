@@ -78,19 +78,6 @@ export default function Hero() {
 
       <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20 flex flex-col items-center text-center">
         <div className="max-w-4xl flex flex-col items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 mb-4 justify-center"
-          >
-            <span className="h-1 w-8 bg-corporate-gold"></span>
-            <span className="text-corporate-gold font-semibold tracking-wider uppercase text-sm">
-              African Supply Chain Solutions
-            </span>
-            <span className="h-1 w-8 bg-corporate-gold"></span>
-          </motion.div>
-          
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

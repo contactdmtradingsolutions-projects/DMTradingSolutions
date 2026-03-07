@@ -13,6 +13,22 @@
           "type": "string",
           "description": "The subtitle or description."
         },
+        "description": {
+          "type": "string",
+          "description": "The main description text."
+        },
+        "paragraph1": {
+          "type": "string",
+          "description": "First paragraph of text."
+        },
+        "paragraph2": {
+          "type": "string",
+          "description": "Second paragraph of text."
+        },
+        "image": {
+          "type": "string",
+          "description": "A single image URL."
+        },
         "heroImages": {
           "type": "array",
           "items": {

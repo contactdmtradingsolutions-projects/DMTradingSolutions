@@ -1,9 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Pickaxe, HardHat, Factory, HeartHandshake, Package, X, ArrowLeft } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Industries() {
   const [selectedIndustry, setSelectedIndustry] = useState<number | null>(null);
+  const [title, setTitle] = useState('Specialized Sourcing & Procurement for Key African Sectors');
+  const [description, setDescription] = useState('We deeply understand the unique logistical challenges and stringent regulatory requirements of diverse industries operating across the African continent. From large-scale mining operations requiring heavy-duty machinery to commercial construction projects demanding bulk building materials, DM Trading Solutions provides targeted, industry-specific supply chain solutions. Our expertise extends to industrial manufacturing, NGO relief efforts, and wholesale distribution networks. By leveraging our extensive network of vetted South African manufacturers and global suppliers, we mitigate cross-border trade risks, optimize your operational efficiency, and ensure that your sector-specific procurement needs are met with unparalleled reliability and precision.');
+  const [image, setImage] = useState('https://images.pexels.com/photos/29224601/pexels-photo-29224601.jpeg');
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'content', 'industries'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.title) setTitle(data.title);
+        if (data.description) setDescription(data.description);
+        if (data.image) setImage(data.image);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const industries = [
     {
@@ -44,7 +62,7 @@ export default function Industries() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16 items-center">
           <div className="lg:col-span-5">
             <img 
-              src="https://images.pexels.com/photos/29224601/pexels-photo-29224601.jpeg" 
+              src={image} 
               alt="Industrial warehouse with heavy machinery" 
               className="w-full h-auto rounded-sm shadow-xl object-cover"
               referrerPolicy="no-referrer"
@@ -58,10 +76,10 @@ export default function Industries() {
               </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6">
-              Specialized Sourcing & Procurement for Key African Sectors
+              {title}
             </h2>
             <p className="text-gray-300 text-lg leading-relaxed">
-              We deeply understand the unique logistical challenges and stringent regulatory requirements of diverse industries operating across the African continent. From large-scale mining operations requiring heavy-duty machinery to commercial construction projects demanding bulk building materials, DM Trading Solutions provides targeted, industry-specific supply chain solutions. Our expertise extends to industrial manufacturing, NGO relief efforts, and wholesale distribution networks. By leveraging our extensive network of vetted South African manufacturers and global suppliers, we mitigate cross-border trade risks, optimize your operational efficiency, and ensure that your sector-specific procurement needs are met with unparalleled reliability and precision.
+              {description}
             </p>
           </div>
         </div>

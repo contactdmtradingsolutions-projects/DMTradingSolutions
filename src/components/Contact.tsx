@@ -1,7 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Contact() {
+  const [title, setTitle] = useState('Get in Touch with Our Team');
+  const [description, setDescription] = useState('Ready to optimize your African supply chain and reduce procurement costs? Partner with DM Trading Solutions for expert cross-border logistics, reliable product sourcing, and seamless import/export services across South Africa and the DRC. Contact our dedicated procurement specialists today and let\'s build your customized trade solution!');
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'content', 'contact'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.title) setTitle(data.title);
+        if (data.description) setDescription(data.description);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,10 +50,10 @@ export default function Contact() {
             <span className="h-1 w-8 bg-corporate-gold"></span>
           </div>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-corporate-navy mb-6">
-            Get in Touch with Our Team
+            {title}
           </h2>
           <p className="text-gray-600 text-lg leading-relaxed">
-            Ready to optimize your African supply chain and reduce procurement costs? Partner with DM Trading Solutions for expert cross-border logistics, reliable product sourcing, and seamless import/export services across South Africa and the DRC. Contact our dedicated procurement specialists today and let's build your customized trade solution!
+            {description}
           </p>
         </div>
 
