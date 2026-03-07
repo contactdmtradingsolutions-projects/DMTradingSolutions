@@ -13,6 +13,17 @@ service cloud.firestore {
     //   - heroImages: list of strings (optional)
     //   - sections: list of maps (optional)
     //
+    // Collection: blogPosts
+    // Document ID: {postId}
+    // Fields:
+    //   - title: string
+    //   - date: string
+    //   - author: string
+    //   - excerpt: string
+    //   - image: string
+    //   - content: string
+    //   - link: string (optional)
+    //
     // Collection: users
     // Document ID: {userId}
     // Fields:
@@ -53,6 +64,11 @@ service cloud.firestore {
       // Anyone can read the website content
       allow read: if true;
       // Only admins can create or update content
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /blogPosts/{postId} {
+      allow read: if true;
       allow create, update, delete: if isAdmin();
     }
 

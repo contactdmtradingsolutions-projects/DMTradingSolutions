@@ -6,6 +6,12 @@ import { db } from '../firebase';
 export default function Contact() {
   const [title, setTitle] = useState('Get in Touch with Our Team');
   const [description, setDescription] = useState('Ready to optimize your African supply chain and reduce procurement costs? Partner with DM Trading Solutions for expert cross-border logistics, reliable product sourcing, and seamless import/export services across South Africa and the DRC. Contact our dedicated procurement specialists today and let\'s build your customized trade solution!');
+  const [address, setAddress] = useState('Johannesburg,\nSouth Africa');
+  const [phone1, setPhone1] = useState('+27 65 845 6336');
+  const [phone2, setPhone2] = useState('+27 73 760 4653');
+  const [hours, setHours] = useState('Mon-Fri, 8am-5pm SAST');
+  const [email1, setEmail1] = useState('info@dmtradingsolutions.com');
+  const [email2, setEmail2] = useState('sales@dmtradingsolutions.com');
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'content', 'contact'), (docSnap) => {
@@ -13,6 +19,12 @@ export default function Contact() {
         const data = docSnap.data();
         if (data.title) setTitle(data.title);
         if (data.description) setDescription(data.description);
+        if (data.address) setAddress(data.address);
+        if (data.phone1) setPhone1(data.phone1);
+        if (data.phone2) setPhone2(data.phone2);
+        if (data.hours) setHours(data.hours);
+        if (data.email1) setEmail1(data.email1);
+        if (data.email2) setEmail2(data.email2);
       }
     });
 
@@ -65,9 +77,8 @@ export default function Contact() {
                 <MapPin className="h-8 w-8 text-corporate-gold" />
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-3">Head Office</h3>
-              <p className="text-gray-600">
-                Johannesburg,<br />
-                South Africa
+              <p className="text-gray-600 whitespace-pre-line">
+                {address}
               </p>
             </div>
 
@@ -77,9 +88,9 @@ export default function Contact() {
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-3">Phone</h3>
               <p className="text-gray-600">
-                <a href="tel:+27658456336" className="hover:text-corporate-gold transition-colors block">+27 65 845 6336</a>
-                <a href="tel:+27737604653" className="hover:text-corporate-gold transition-colors block mb-1">+27 73 760 4653</a>
-                <span className="text-sm text-gray-500">Mon-Fri, 8am-5pm SAST</span>
+                <a href={`tel:${phone1.replace(/\s+/g, '')}`} className="hover:text-corporate-gold transition-colors block">{phone1}</a>
+                {phone2 && <a href={`tel:${phone2.replace(/\s+/g, '')}`} className="hover:text-corporate-gold transition-colors block mb-1">{phone2}</a>}
+                <span className="text-sm text-gray-500">{hours}</span>
               </p>
             </div>
 
@@ -89,8 +100,8 @@ export default function Contact() {
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-3">Email</h3>
               <p className="text-gray-600">
-                <a href="mailto:info@dmtradingsolutions.com" className="hover:text-corporate-gold transition-colors">info@dmtradingsolutions.com</a><br />
-                <a href="mailto:sales@dmtradingsolutions.com" className="hover:text-corporate-gold transition-colors">sales@dmtradingsolutions.com</a>
+                <a href={`mailto:${email1}`} className="hover:text-corporate-gold transition-colors block">{email1}</a>
+                {email2 && <a href={`mailto:${email2}`} className="hover:text-corporate-gold transition-colors block">{email2}</a>}
               </p>
             </div>
 
@@ -99,9 +110,8 @@ export default function Contact() {
                 <Clock className="h-8 w-8 text-corporate-gold" />
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-3">Business Hours</h3>
-              <p className="text-gray-600">
-                Monday - Friday<br />
-                08:00 - 17:00 SAST
+              <p className="text-gray-600 whitespace-pre-line">
+                {hours}
               </p>
             </div>
           </div>

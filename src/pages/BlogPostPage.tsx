@@ -1,12 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { blogPosts } from './BlogPage';
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import PageHero from '../components/PageHero';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function BlogPostPage() {
   const { id } = useParams<{ id: string }>();
-  const post = blogPosts.find(p => p.id === id);
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!id) return;
+      try {
+        const docRef = doc(db, 'blogPosts', id);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setPost({ id: docSnap.id, ...docSnap.data() });
+        }
+      } catch (error) {
+        console.error("Error fetching blog post:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-corporate-light pt-20">
+        <div className="text-center">
+          <p className="text-gray-600 mb-8">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!post) {
     return (

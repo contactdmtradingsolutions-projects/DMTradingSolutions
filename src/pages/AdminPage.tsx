@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
-import { Save, LogOut, Loader2, AlertCircle } from 'lucide-react';
+import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc } from 'firebase/firestore';
+import { Save, LogOut, Loader2, AlertCircle, Plus, Edit, Trash2 } from 'lucide-react';
 
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -43,11 +43,21 @@ export default function AdminPage() {
   // Contact Page Content State
   const [contactTitle, setContactTitle] = useState('');
   const [contactDescription, setContactDescription] = useState('');
+  const [contactAddress, setContactAddress] = useState('');
+  const [contactPhone1, setContactPhone1] = useState('');
+  const [contactPhone2, setContactPhone2] = useState('');
+  const [contactHours, setContactHours] = useState('');
+  const [contactEmail1, setContactEmail1] = useState('');
+  const [contactEmail2, setContactEmail2] = useState('');
 
   // Blog Page Content State
   const [blogTitle, setBlogTitle] = useState('');
   const [blogSubtitle, setBlogSubtitle] = useState('');
   const [blogImage, setBlogImage] = useState('');
+  
+  // Blog Posts State
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
+  const [editingPost, setEditingPost] = useState<any | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -114,6 +124,12 @@ export default function AdminPage() {
         const data = contactDoc.data();
         setContactTitle(data.title || '');
         setContactDescription(data.description || '');
+        setContactAddress(data.address || '');
+        setContactPhone1(data.phone1 || '');
+        setContactPhone2(data.phone2 || '');
+        setContactHours(data.hours || '');
+        setContactEmail1(data.email1 || '');
+        setContactEmail2(data.email2 || '');
       }
 
       // Fetch Blog
@@ -124,6 +140,11 @@ export default function AdminPage() {
         setBlogSubtitle(data.subtitle || '');
         setBlogImage(data.image || '');
       }
+
+      // Fetch Blog Posts
+      const postsSnapshot = await getDocs(collection(db, 'blogPosts'));
+      const postsData = postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setBlogPosts(postsData);
     } catch (err: any) {
       console.error("Error fetching content:", err);
       setError("Failed to load content. You might not have admin permissions.");
@@ -196,7 +217,13 @@ export default function AdminPage() {
       } else if (activeTab === 'contact') {
         await setDoc(doc(db, 'content', 'contact'), {
           title: contactTitle,
-          description: contactDescription
+          description: contactDescription,
+          address: contactAddress,
+          phone1: contactPhone1,
+          phone2: contactPhone2,
+          hours: contactHours,
+          email1: contactEmail1,
+          email2: contactEmail2
         }, { merge: true });
         setSuccess("Contact page content saved successfully!");
       } else if (activeTab === 'blog') {
@@ -221,6 +248,66 @@ export default function AdminPage() {
     const newImages = [...homeHeroImages];
     newImages[index] = value;
     setHomeHeroImages(newImages);
+  };
+
+  const handleSaveBlogPost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !editingPost) return;
+    
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const postData = {
+        title: editingPost.title || '',
+        date: editingPost.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+        author: editingPost.author || 'DM Trading Expert',
+        excerpt: editingPost.excerpt || '',
+        image: editingPost.image || '',
+        content: editingPost.content || '',
+        link: editingPost.link || ''
+      };
+
+      if (editingPost.id) {
+        // Update existing
+        await setDoc(doc(db, 'blogPosts', editingPost.id), postData, { merge: true });
+        setSuccess("Blog post updated successfully!");
+      } else {
+        // Create new
+        await addDoc(collection(db, 'blogPosts'), postData);
+        setSuccess("Blog post created successfully!");
+      }
+      
+      setEditingPost(null);
+      await fetchContent(); // Refresh the list
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      console.error("Error saving blog post:", err);
+      setError("Failed to save blog post. You might not have admin permissions.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteBlogPost = async (id: string) => {
+    if (!user || !window.confirm("Are you sure you want to delete this post?")) return;
+    
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      await deleteDoc(doc(db, 'blogPosts', id));
+      setSuccess("Blog post deleted successfully!");
+      await fetchContent(); // Refresh the list
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (err: any) {
+      console.error("Error deleting blog post:", err);
+      setError("Failed to delete blog post.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -640,6 +727,104 @@ export default function AdminPage() {
                       />
                     </div>
                   </div>
+
+                  <div>
+                    <label htmlFor="contactAddress" className="block text-sm font-medium text-gray-700">
+                      Address
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="contactAddress"
+                        rows={3}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={contactAddress}
+                        onChange={(e) => setContactAddress(e.target.value)}
+                        placeholder="Johannesburg,\nSouth Africa"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="contactPhone1" className="block text-sm font-medium text-gray-700">
+                        Phone 1
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          id="contactPhone1"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={contactPhone1}
+                          onChange={(e) => setContactPhone1(e.target.value)}
+                          placeholder="+27 65 845 6336"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="contactPhone2" className="block text-sm font-medium text-gray-700">
+                        Phone 2 (Optional)
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="text"
+                          id="contactPhone2"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={contactPhone2}
+                          onChange={(e) => setContactPhone2(e.target.value)}
+                          placeholder="+27 73 760 4653"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="contactHours" className="block text-sm font-medium text-gray-700">
+                      Business Hours
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="contactHours"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={contactHours}
+                        onChange={(e) => setContactHours(e.target.value)}
+                        placeholder="Mon-Fri, 8am-5pm SAST"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="contactEmail1" className="block text-sm font-medium text-gray-700">
+                        Email 1
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="email"
+                          id="contactEmail1"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={contactEmail1}
+                          onChange={(e) => setContactEmail1(e.target.value)}
+                          placeholder="info@dmtradingsolutions.com"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="contactEmail2" className="block text-sm font-medium text-gray-700">
+                        Email 2 (Optional)
+                      </label>
+                      <div className="mt-1">
+                        <input
+                          type="email"
+                          id="contactEmail2"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={contactEmail2}
+                          onChange={(e) => setContactEmail2(e.target.value)}
+                          placeholder="sales@dmtradingsolutions.com"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </>
               )}
 
@@ -693,23 +878,161 @@ export default function AdminPage() {
                       />
                     </div>
                   </div>
+
+                  <div className="pt-4 border-t border-gray-200">
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-corporate-gold hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold disabled:opacity-50"
+                    >
+                      {saving ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4 mr-2" />
+                      )}
+                      Save Blog Page Content
+                    </button>
+                  </div>
+
+                  <div className="pt-8 mt-8 border-t border-gray-200">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-xl font-medium text-gray-900">Manage Blog Posts</h2>
+                      <button
+                        type="button"
+                        onClick={() => setEditingPost({ title: '', excerpt: '', content: '', image: '', link: '' })}
+                        className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-corporate-navy hover:bg-corporate-navy/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add New Post
+                      </button>
+                    </div>
+
+                    {editingPost ? (
+                      <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-8">
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">
+                          {editingPost.id ? 'Edit Post' : 'Create New Post'}
+                        </h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Title</label>
+                            <input
+                              type="text"
+                              className="mt-1 shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                              value={editingPost.title}
+                              onChange={(e) => setEditingPost({ ...editingPost, title: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Excerpt</label>
+                            <textarea
+                              rows={2}
+                              className="mt-1 shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                              value={editingPost.excerpt}
+                              onChange={(e) => setEditingPost({ ...editingPost, excerpt: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                            <input
+                              type="url"
+                              className="mt-1 shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                              value={editingPost.image}
+                              onChange={(e) => setEditingPost({ ...editingPost, image: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Live Link (Optional)</label>
+                            <input
+                              type="url"
+                              className="mt-1 shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                              value={editingPost.link || ''}
+                              onChange={(e) => setEditingPost({ ...editingPost, link: e.target.value })}
+                              placeholder="https://..."
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700">Content (HTML allowed)</label>
+                            <textarea
+                              rows={8}
+                              className="mt-1 shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border font-mono text-sm"
+                              value={editingPost.content}
+                              onChange={(e) => setEditingPost({ ...editingPost, content: e.target.value })}
+                            />
+                          </div>
+                          <div className="flex justify-end space-x-3 pt-4">
+                            <button
+                              type="button"
+                              onClick={() => setEditingPost(null)}
+                              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleSaveBlogPost}
+                              disabled={saving}
+                              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-corporate-gold hover:bg-yellow-600 disabled:opacity-50"
+                            >
+                              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                              Save Post
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-white border border-gray-200 rounded-md overflow-hidden">
+                        <ul className="divide-y divide-gray-200">
+                          {blogPosts.length === 0 ? (
+                            <li className="p-4 text-center text-gray-500">No blog posts found.</li>
+                          ) : (
+                            blogPosts.map((post) => (
+                              <li key={post.id} className="p-4 flex items-center justify-between hover:bg-gray-50">
+                                <div>
+                                  <h4 className="text-sm font-medium text-gray-900">{post.title}</h4>
+                                  <p className="text-sm text-gray-500">{post.date}</p>
+                                </div>
+                                <div className="flex space-x-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingPost(post)}
+                                    className="p-2 text-gray-400 hover:text-corporate-navy transition-colors"
+                                  >
+                                    <Edit className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteBlogPost(post.id)}
+                                    className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </li>
+                            ))
+                          )}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
 
-              <div className="pt-4 border-t border-gray-200">
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-corporate-gold hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold disabled:opacity-50"
-                >
-                  {saving ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Save className="w-4 h-4 mr-2" />
-                  )}
-                  Save Changes
-                </button>
-              </div>
+              {activeTab !== 'blog' && (
+                <div className="pt-4 border-t border-gray-200">
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-corporate-gold hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold disabled:opacity-50"
+                  >
+                    {saving ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4 mr-2" />
+                    )}
+                    Save Changes
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>

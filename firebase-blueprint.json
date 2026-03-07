@@ -65,12 +65,31 @@
         }
       },
       "required": ["email", "role"]
+    },
+    "BlogPost": {
+      "title": "Blog Post",
+      "description": "A blog post article.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "author": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "image": { "type": "string" },
+        "content": { "type": "string" },
+        "link": { "type": "string" }
+      },
+      "required": ["title", "date", "author", "excerpt", "image", "content"]
     }
   },
   "firestore": {
     "/content/{pageId}": {
       "schema": { "$ref": "#/entities/PageContent" },
       "description": "Stores content for different pages (e.g., home, about, services)."
+    },
+    "/blogPosts/{postId}": {
+      "schema": { "$ref": "#/entities/BlogPost" },
+      "description": "Stores blog posts."
     },
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/User" },
