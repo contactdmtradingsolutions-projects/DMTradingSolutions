@@ -11,10 +11,24 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Tabs State
+  const [activeTab, setActiveTab] = useState<'home' | 'about' | 'services'>('home');
+
   // Home Page Content State
   const [homeTitle, setHomeTitle] = useState('');
   const [homeSubtitle, setHomeSubtitle] = useState('');
   const [homeHeroImages, setHomeHeroImages] = useState<string[]>(['', '', '']);
+
+  // About Page Content State
+  const [aboutTitle, setAboutTitle] = useState('');
+  const [aboutParagraph1, setAboutParagraph1] = useState('');
+  const [aboutParagraph2, setAboutParagraph2] = useState('');
+  const [aboutImage, setAboutImage] = useState('');
+
+  // Services Page Content State
+  const [servicesTitle, setServicesTitle] = useState('');
+  const [servicesDescription, setServicesDescription] = useState('');
+  const [servicesImage, setServicesImage] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -29,13 +43,32 @@ export default function AdminPage() {
 
   const fetchContent = async () => {
     try {
-      const docRef = doc(db, 'content', 'home');
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
+      // Fetch Home
+      const homeDoc = await getDoc(doc(db, 'content', 'home'));
+      if (homeDoc.exists()) {
+        const data = homeDoc.data();
         setHomeTitle(data.title || '');
         setHomeSubtitle(data.subtitle || '');
         setHomeHeroImages(data.heroImages || ['', '', '']);
+      }
+
+      // Fetch About
+      const aboutDoc = await getDoc(doc(db, 'content', 'about'));
+      if (aboutDoc.exists()) {
+        const data = aboutDoc.data();
+        setAboutTitle(data.title || '');
+        setAboutParagraph1(data.paragraph1 || '');
+        setAboutParagraph2(data.paragraph2 || '');
+        setAboutImage(data.image || '');
+      }
+
+      // Fetch Services
+      const servicesDoc = await getDoc(doc(db, 'content', 'services'));
+      if (servicesDoc.exists()) {
+        const data = servicesDoc.data();
+        setServicesTitle(data.title || '');
+        setServicesDescription(data.description || '');
+        setServicesImage(data.image || '');
       }
     } catch (err: any) {
       console.error("Error fetching content:", err);
@@ -70,13 +103,30 @@ export default function AdminPage() {
     setSuccess(null);
     
     try {
-      await setDoc(doc(db, 'content', 'home'), {
-        title: homeTitle,
-        subtitle: homeSubtitle,
-        heroImages: homeHeroImages.filter(img => img.trim() !== '')
-      }, { merge: true });
+      if (activeTab === 'home') {
+        await setDoc(doc(db, 'content', 'home'), {
+          title: homeTitle,
+          subtitle: homeSubtitle,
+          heroImages: homeHeroImages.filter(img => img.trim() !== '')
+        }, { merge: true });
+        setSuccess("Home page content saved successfully!");
+      } else if (activeTab === 'about') {
+        await setDoc(doc(db, 'content', 'about'), {
+          title: aboutTitle,
+          paragraph1: aboutParagraph1,
+          paragraph2: aboutParagraph2,
+          image: aboutImage
+        }, { merge: true });
+        setSuccess("About page content saved successfully!");
+      } else if (activeTab === 'services') {
+        await setDoc(doc(db, 'content', 'services'), {
+          title: servicesTitle,
+          description: servicesDescription,
+          image: servicesImage
+        }, { merge: true });
+        setSuccess("Services page content saved successfully!");
+      }
       
-      setSuccess("Home page content saved successfully!");
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: any) {
       console.error("Error saving content:", err);
@@ -161,61 +211,222 @@ export default function AdminPage() {
         )}
 
         <div className="bg-white shadow rounded-lg overflow-hidden">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex" aria-label="Tabs">
+              <button
+                onClick={() => setActiveTab('home')}
+                className={`${
+                  activeTab === 'home'
+                    ? 'border-corporate-gold text-corporate-navy'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
+              >
+                Home Page
+              </button>
+              <button
+                onClick={() => setActiveTab('about')}
+                className={`${
+                  activeTab === 'about'
+                    ? 'border-corporate-gold text-corporate-navy'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
+              >
+                About Us
+              </button>
+              <button
+                onClick={() => setActiveTab('services')}
+                className={`${
+                  activeTab === 'services'
+                    ? 'border-corporate-gold text-corporate-navy'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm transition-colors`}
+              >
+                Services
+              </button>
+            </nav>
+          </div>
+
           <div className="px-4 py-5 sm:p-6">
-            <h2 className="text-lg font-medium text-gray-900 mb-4">Home Page Content</h2>
             <form onSubmit={handleSave} className="space-y-6">
               
-              <div>
-                <label htmlFor="homeTitle" className="block text-sm font-medium text-gray-700">
-                  Hero Title (HTML allowed)
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    id="homeTitle"
-                    rows={3}
-                    className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                    value={homeTitle}
-                    onChange={(e) => setHomeTitle(e.target.value)}
-                    placeholder="Your Trusted African <br /> <span class=&quot;text-transparent bg-clip-text bg-gradient-to-r from-corporate-gold to-yellow-200&quot;>Procurement & Sourcing</span> Partner"
-                  />
-                </div>
-              </div>
+              {activeTab === 'home' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Home Page Content</h2>
+                  <div>
+                    <label htmlFor="homeTitle" className="block text-sm font-medium text-gray-700">
+                      Hero Title (HTML allowed)
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="homeTitle"
+                        rows={3}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={homeTitle}
+                        onChange={(e) => setHomeTitle(e.target.value)}
+                        placeholder="Your Trusted African <br /> <span class=&quot;text-transparent bg-clip-text bg-gradient-to-r from-corporate-gold to-yellow-200&quot;>Procurement & Sourcing</span> Partner"
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <label htmlFor="homeSubtitle" className="block text-sm font-medium text-gray-700">
-                  Hero Subtitle
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    id="homeSubtitle"
-                    rows={3}
-                    className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                    value={homeSubtitle}
-                    onChange={(e) => setHomeSubtitle(e.target.value)}
-                    placeholder="Expert cross-border trade, supplier sourcing..."
-                  />
-                </div>
-              </div>
+                  <div>
+                    <label htmlFor="homeSubtitle" className="block text-sm font-medium text-gray-700">
+                      Hero Subtitle
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="homeSubtitle"
+                        rows={3}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={homeSubtitle}
+                        onChange={(e) => setHomeSubtitle(e.target.value)}
+                        placeholder="Expert cross-border trade, supplier sourcing..."
+                      />
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hero Images (URLs)
-                </label>
-                <div className="space-y-3">
-                  {[0, 1, 2].map((index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Hero Images (URLs)
+                    </label>
+                    <div className="space-y-3">
+                      {[0, 1, 2].map((index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-500 w-6">{index + 1}.</span>
+                          <input
+                            type="url"
+                            className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                            value={homeHeroImages[index] || ''}
+                            onChange={(e) => updateHeroImage(index, e.target.value)}
+                            placeholder="https://images.pexels.com/..."
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'about' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">About Us Content</h2>
+                  <div>
+                    <label htmlFor="aboutTitle" className="block text-sm font-medium text-gray-700">
+                      Section Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="aboutTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={aboutTitle}
+                        onChange={(e) => setAboutTitle(e.target.value)}
+                        placeholder="Connecting African Suppliers with International Buyers"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="aboutParagraph1" className="block text-sm font-medium text-gray-700">
+                      Paragraph 1
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="aboutParagraph1"
+                        rows={4}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={aboutParagraph1}
+                        onChange={(e) => setAboutParagraph1(e.target.value)}
+                        placeholder="Based in South Africa, DM Trading Solutions..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="aboutParagraph2" className="block text-sm font-medium text-gray-700">
+                      Paragraph 2
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="aboutParagraph2"
+                        rows={4}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={aboutParagraph2}
+                        onChange={(e) => setAboutParagraph2(e.target.value)}
+                        placeholder="Our core expertise lies in facilitating seamless trade..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="aboutImage" className="block text-sm font-medium text-gray-700">
+                      Side Image (URL)
+                    </label>
+                    <div className="mt-1">
                       <input
                         type="url"
+                        id="aboutImage"
                         className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
-                        value={homeHeroImages[index] || ''}
-                        onChange={(e) => updateHeroImage(index, e.target.value)}
+                        value={aboutImage}
+                        onChange={(e) => setAboutImage(e.target.value)}
                         placeholder="https://images.pexels.com/..."
                       />
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'services' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Services Content</h2>
+                  <div>
+                    <label htmlFor="servicesTitle" className="block text-sm font-medium text-gray-700">
+                      Section Title
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="text"
+                        id="servicesTitle"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={servicesTitle}
+                        onChange={(e) => setServicesTitle(e.target.value)}
+                        placeholder="Comprehensive African Procurement & Supply Chain Solutions"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="servicesDescription" className="block text-sm font-medium text-gray-700">
+                      Main Description
+                    </label>
+                    <div className="mt-1">
+                      <textarea
+                        id="servicesDescription"
+                        rows={6}
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={servicesDescription}
+                        onChange={(e) => setServicesDescription(e.target.value)}
+                        placeholder="At DM Trading Solutions, we deliver end-to-end supply chain management..."
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="servicesImage" className="block text-sm font-medium text-gray-700">
+                      Side Image (URL)
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        type="url"
+                        id="servicesImage"
+                        className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                        value={servicesImage}
+                        onChange={(e) => setServicesImage(e.target.value)}
+                        placeholder="https://images.unsplash.com/..."
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="pt-4 border-t border-gray-200">
                 <button

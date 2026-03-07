@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ShoppingCart, Search, Ship, CheckCircle, Truck, X, ArrowLeft } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Services() {
   const [selectedService, setSelectedService] = useState<number | null>(null);
+  const [content, setContent] = useState({
+    title: "Comprehensive African Procurement & Supply Chain Solutions",
+    description: "At DM Trading Solutions, we deliver end-to-end supply chain management and strategic product sourcing tailored for international businesses operating within or expanding into Africa. As a premier South African procurement company, we specialize in bridging the gap between global enterprises and reliable African suppliers. Our core services encompass heavy industrial equipment sourcing, cross-border logistics coordination, import and export compliance, and rigorous supplier verification. Whether you are navigating the complex trade corridors of the Democratic Republic of the Congo (DRC) or securing wholesale materials across the SADC region, our dedicated team ensures cost-effective, risk-free, and timely delivery of your critical assets.",
+    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop"
+  });
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'content', 'services'), (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        setContent(prev => ({
+          title: data.title || prev.title,
+          description: data.description || prev.description,
+          image: data.image || prev.image
+        }));
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const services = [
     {
@@ -44,7 +65,7 @@ export default function Services() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16 items-center">
           <div className="lg:col-span-5">
             <img 
-              src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2070&auto=format&fit=crop" 
+              src={content.image} 
               alt="Services Overview" 
               className="w-full h-auto rounded-sm shadow-xl object-cover"
               referrerPolicy="no-referrer"
@@ -58,10 +79,10 @@ export default function Services() {
               </span>
             </div>
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-corporate-navy mb-6">
-              Comprehensive African Procurement & Supply Chain Solutions
+              {content.title}
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-              At DM Trading Solutions, we deliver end-to-end supply chain management and strategic product sourcing tailored for international businesses operating within or expanding into Africa. As a premier South African procurement company, we specialize in bridging the gap between global enterprises and reliable African suppliers. Our core services encompass heavy industrial equipment sourcing, cross-border logistics coordination, import and export compliance, and rigorous supplier verification. Whether you are navigating the complex trade corridors of the Democratic Republic of the Congo (DRC) or securing wholesale materials across the SADC region, our dedicated team ensures cost-effective, risk-free, and timely delivery of your critical assets.
+              {content.description}
             </p>
           </div>
         </div>

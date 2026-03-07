@@ -1,9 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Target, Users, TrendingUp, X } from 'lucide-react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function About() {
   const [selectedTopic, setSelectedTopic] = useState<number | null>(null);
+  const [content, setContent] = useState({
+    title: "Connecting African Suppliers with International Buyers",
+    paragraph1: "Based in South Africa, DM Trading Solutions (PTY) LTD specializes in bridging the gap between reliable African suppliers and international businesses. As a leading procurement company Africa trusts, we are your dedicated partner for supplier sourcing South Africa and import export South Africa operations.",
+    paragraph2: "Our core expertise lies in facilitating seamless trade between South Africa and the Democratic Republic of the Congo, helping businesses source reliable suppliers, manage complex procurement processes, and coordinate logistics efficiently.",
+    image: "https://images.pexels.com/photos/1427541/pexels-photo-1427541.jpeg"
+  });
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'content', 'about'), (doc) => {
+      if (doc.exists()) {
+        const data = doc.data();
+        setContent(prev => ({
+          title: data.title || prev.title,
+          paragraph1: data.paragraph1 || prev.paragraph1,
+          paragraph2: data.paragraph2 || prev.paragraph2,
+          image: data.image || prev.image
+        }));
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const topics = [
     {
@@ -44,15 +67,15 @@ export default function About() {
             </div>
             
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-corporate-navy mb-6">
-              Connecting African Suppliers with International Buyers
+              {content.title}
             </h2>
             
             <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-              Based in South Africa, DM Trading Solutions (PTY) LTD specializes in bridging the gap between reliable African suppliers and international businesses. As a leading procurement company Africa trusts, we are your dedicated partner for supplier sourcing South Africa and import export South Africa operations.
+              {content.paragraph1}
             </p>
             
             <p className="text-gray-600 mb-8 text-lg leading-relaxed">
-              Our core expertise lies in facilitating seamless trade between South Africa and the Democratic Republic of the Congo, helping businesses source reliable suppliers, manage complex procurement processes, and coordinate logistics efficiently.
+              {content.paragraph2}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -83,7 +106,7 @@ export default function About() {
           >
             <div className="absolute inset-0 bg-corporate-gold translate-x-4 translate-y-4 rounded-sm -z-10"></div>
             <img
-              src="https://images.pexels.com/photos/1427541/pexels-photo-1427541.jpeg"
+              src={content.image}
               alt="Intermodal container stacked on port"
               className="w-full h-auto object-cover rounded-sm shadow-xl"
               referrerPolicy="no-referrer"
