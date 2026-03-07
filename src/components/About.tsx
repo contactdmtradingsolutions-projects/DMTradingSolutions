@@ -83,8 +83,8 @@ export default function About() {
           >
             <div className="absolute inset-0 bg-corporate-gold translate-x-4 translate-y-4 rounded-sm -z-10"></div>
             <img
-              src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop"
-              alt="Business professionals discussing procurement strategy"
+              src="https://images.pexels.com/photos/1427541/pexels-photo-1427541.jpeg"
+              alt="Intermodal container stacked on port"
               className="w-full h-auto object-cover rounded-sm shadow-xl"
               referrerPolicy="no-referrer"
             />

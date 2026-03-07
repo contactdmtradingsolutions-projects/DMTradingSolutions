@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: content
+    // Document ID: {pageId} (e.g., home, about, services)
+    // Fields:
+    //   - title: string (optional)
+    //   - subtitle: string (optional)
+    //   - heroImages: list of strings (optional)
+    //   - sections: list of maps (optional)
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - email: string
+    //   - role: string ('admin')
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "contact.dmtradingsolutions@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasOnly(['email', 'role']) &&
+             data.email is string &&
+             data.role in ['admin'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /content/{pageId} {
+      // Anyone can read the website content
+      allow read: if true;
+      // Only admins can create or update content
+      allow create, update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      // Users can read their own profile, admins can read all
+      allow read: if isOwner(userId) || isAdmin();
+      
+      // Only admins can create or update user roles
+      allow create: if isAdmin() && isValidUser(request.resource.data);
+      allow update: if isAdmin() && isValidUser(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}

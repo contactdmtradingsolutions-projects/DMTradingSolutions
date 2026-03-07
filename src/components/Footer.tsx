@@ -46,10 +46,12 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-heading font-bold text-lg mb-6">Newsletter</h4>
             <p className="text-sm mb-4">Subscribe to receive updates on African trade and procurement insights.</p>
-            <form className="flex">
+            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="flex">
               <input
                 type="email"
+                name="email"
                 placeholder="Email Address"
+                required
                 className="bg-corporate-navy border border-gray-700 text-white px-4 py-2 w-full rounded-l-sm focus:outline-none focus:border-corporate-gold text-sm"
               />
               <button
@@ -63,7 +65,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} DM Trading Solutions. All rights reserved.</p>
+          <p><Link to="/admin" className="cursor-default hover:text-gray-400 text-gray-400">&copy;</Link> {new Date().getFullYear()} DM Trading Solutions. All rights reserved.</p>
           <div className="flex space-x-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

@@ -17,6 +17,8 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ContactPage from './pages/ContactPage';
 import QuotePage from './pages/QuotePage';
+import AdminPage from './pages/AdminPage';
+import WhatsAppButton from './components/WhatsAppButton';
 
 export default function App() {
   return (
@@ -35,9 +37,11 @@ export default function App() {
             <Route path="/blog/:id" element={<BlogPostPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/quote" element={<QuotePage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </main>
         <Footer />
+        <WhatsAppButton />
       </div>
     </Router>
   );

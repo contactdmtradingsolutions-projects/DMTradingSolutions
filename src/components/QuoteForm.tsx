@@ -67,15 +67,15 @@ export default function QuoteForm() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-sm p-8 shadow-2xl"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
-                  <input type="text" id="company" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="Your Company Ltd" />
+                  <input type="text" id="company" name="company" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="Your Company Ltd" />
                 </div>
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">Country *</label>
-                  <select id="country" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow bg-white">
+                  <select id="country" name="country" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow bg-white">
                     <option value="">Select a country</option>
                     <optgroup label="Africa">
                       <option value="South Africa">South Africa</option>
@@ -116,43 +116,40 @@ export default function QuoteForm() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Contact Name *</label>
-                  <input type="text" id="name" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="John Doe" />
+                  <input type="text" id="name" name="name" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="John Doe" />
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-                  <input type="email" id="email" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="john@company.com" />
+                  <input type="email" id="email" name="email" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="john@company.com" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="product" className="block text-sm font-medium text-gray-700 mb-2">Product Needed *</label>
-                  <input type="text" id="product" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="e.g. Mining Equipment" />
+                  <input type="text" id="product" name="product" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="e.g. Mining Equipment" />
                 </div>
                 <div>
                   <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">Quantity *</label>
-                  <input type="text" id="quantity" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="e.g. 5 Units" />
+                  <input type="text" id="quantity" name="quantity" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="e.g. 5 Units" />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Delivery Location *</label>
-                <input type="text" id="location" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="City, Country" />
+                <input type="text" id="location" name="location" required className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow" placeholder="City, Country" />
               </div>
 
               <div>
                 <label htmlFor="details" className="block text-sm font-medium text-gray-700 mb-2">Additional Details</label>
-                <textarea id="details" rows={4} className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow resize-none" placeholder="Please provide any specific requirements, timelines, or specifications..."></textarea>
+                <textarea id="details" name="details" rows={4} className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none text-gray-900 transition-shadow resize-none" placeholder="Please provide any specific requirements, timelines, or specifications..."></textarea>
               </div>
 
               <button
                 type="submit"
-                disabled={formStatus !== 'idle'}
-                className="w-full bg-corporate-gold text-corporate-navy py-4 rounded-sm font-bold text-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+                className="w-full bg-corporate-gold text-corporate-navy py-4 rounded-sm font-bold text-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2"
               >
-                {formStatus === 'idle' && <>Submit Request <Send className="h-5 w-5" /></>}
-                {formStatus === 'submitting' && 'Sending...'}
-                {formStatus === 'success' && 'Request Sent Successfully!'}
+                Submit Request <Send className="h-5 w-5" />
               </button>
             </form>
           </motion.div>

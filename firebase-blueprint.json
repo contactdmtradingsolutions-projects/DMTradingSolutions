@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "PageContent": {
+      "title": "Page Content",
+      "description": "Content for a specific page or section of the website.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The main title of the page or section."
+        },
+        "subtitle": {
+          "type": "string",
+          "description": "The subtitle or description."
+        },
+        "heroImages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of hero image URLs."
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "content": { "type": "string" },
+              "image": { "type": "string" }
+            }
+          },
+          "description": "Content sections."
+        }
+      }
+    },
+    "User": {
+      "title": "User",
+      "description": "Admin user profile.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"]
+        }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/content/{pageId}": {
+      "schema": { "$ref": "#/entities/PageContent" },
+      "description": "Stores content for different pages (e.g., home, about, services)."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles and roles."
+    }
+  }
+}

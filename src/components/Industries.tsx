@@ -10,13 +10,13 @@ export default function Industries() {
       name: 'Mining Industry',
       description: 'We proceed by sourcing heavy-duty equipment, safety gear, and specialized machinery directly from vetted manufacturers. We coordinate complex logistics to remote mining sites across Africa, ensuring your operations never face downtime due to supply chain delays.',
       icon: <Pickaxe className="h-10 w-10" />,
-      image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?q=80&w=1974&auto=format&fit=crop',
+      image: 'https://images.pexels.com/photos/3089685/pexels-photo-3089685.jpeg',
     },
     {
       name: 'Construction Industry',
       description: 'We proceed by supplying bulk construction materials, tools, and heavy vehicles. We negotiate competitive rates with regional suppliers and manage cross-border transport, ensuring your construction projects in the DRC and beyond stay on schedule and within budget.',
       icon: <HardHat className="h-10 w-10" />,
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356f90?q=80&w=2070&auto=format&fit=crop',
+      image: 'https://images.pexels.com/photos/544966/pexels-photo-544966.jpeg',
     },
     {
       name: 'Industrial Supply',
@@ -44,8 +44,8 @@ export default function Industries() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16 items-center">
           <div className="lg:col-span-5">
             <img 
-              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop" 
-              alt="Industries Overview" 
+              src="https://images.pexels.com/photos/29224601/pexels-photo-29224601.jpeg" 
+              alt="Industrial warehouse with heavy machinery" 
               className="w-full h-auto rounded-sm shadow-xl object-cover"
               referrerPolicy="no-referrer"
             />
@@ -75,7 +75,7 @@ export default function Industries() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               onClick={() => setSelectedIndustry(index)}
-              className="group relative overflow-hidden rounded-sm h-64 cursor-pointer"
+              className="group relative overflow-hidden rounded-sm h-64 cursor-pointer shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
             >
               <div className="absolute inset-0 z-0">
                 <img

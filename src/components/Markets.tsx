@@ -54,10 +54,10 @@ export default function Markets() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white p-8 rounded-sm shadow-md border-t-4 border-corporate-gold hover:shadow-xl transition-shadow"
+              className="bg-white p-8 rounded-sm shadow-md border-t-4 border-corporate-gold hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group"
             >
-              <div className="bg-corporate-light w-12 h-12 rounded-full flex items-center justify-center mb-6">
-                <MapPin className="h-6 w-6 text-corporate-navy" />
+              <div className="bg-corporate-light w-12 h-12 rounded-full flex items-center justify-center mb-6 group-hover:bg-corporate-gold transition-colors duration-300">
+                <MapPin className="h-6 w-6 text-corporate-navy group-hover:text-white transition-colors duration-300" />
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-4">
                 {market.name}

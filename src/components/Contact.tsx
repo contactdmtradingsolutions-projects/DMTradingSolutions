@@ -92,7 +92,7 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-white p-8 rounded-sm shadow-xl border border-gray-100">
             <h3 className="text-2xl font-heading font-bold text-corporate-navy mb-6">Send us a Message</h3>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
@@ -101,8 +101,6 @@ export default function Contact() {
                     id="name"
                     name="name"
                     required
-                    value={formData.name}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                     placeholder="John Doe"
                   />
@@ -114,8 +112,6 @@ export default function Contact() {
                     id="email"
                     name="email"
                     required
-                    value={formData.email}
-                    onChange={handleChange}
                     className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                     placeholder="john@company.com"
                   />
@@ -128,8 +124,6 @@ export default function Contact() {
                   id="subject"
                   name="subject"
                   required
-                  value={formData.subject}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                   placeholder="How can we help you?"
                 />
@@ -141,8 +135,6 @@ export default function Contact() {
                   name="message"
                   required
                   rows={5}
-                  value={formData.message}
-                  onChange={handleChange}
                   className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow resize-none"
                   placeholder="Please provide details about your inquiry..."
                 ></textarea>

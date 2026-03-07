@@ -75,9 +75,9 @@ export default function Services() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               onClick={() => setSelectedService(index)}
-              className="bg-white p-8 rounded-sm shadow-md hover:shadow-xl transition-shadow border-t-4 border-transparent hover:border-corporate-gold group cursor-pointer flex flex-col h-full"
+              className="bg-white p-8 rounded-sm shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border-t-4 border-transparent hover:border-corporate-gold group cursor-pointer flex flex-col h-full"
             >
-              <div className="text-corporate-navy mb-6 group-hover:text-corporate-gold transition-colors">
+              <div className="text-corporate-navy mb-6 group-hover:text-corporate-gold transition-colors transform group-hover:scale-110 duration-300 origin-left">
                 {service.icon}
               </div>
               <h3 className="text-xl font-heading font-bold text-corporate-navy mb-4">
