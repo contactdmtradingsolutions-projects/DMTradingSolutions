@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentLang, setCurrentLang] = useState('en');
   const location = useLocation();
 
   useEffect(() => {
@@ -12,8 +13,27 @@ export default function Navbar() {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
+
+    // Check initial language from cookie
+    const match = document.cookie.match(/(^|;) ?googtrans=([^;]*)(;|$)/);
+    if (match) {
+      const lang = match[2].split('/').pop();
+      if (lang === 'fr' || lang === 'en') {
+        setCurrentLang(lang);
+      }
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const changeLanguage = (lang: string) => {
+    const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+    if (select) {
+      select.value = lang;
+      select.dispatchEvent(new Event('change'));
+      setCurrentLang(lang);
+    }
+  };
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -41,7 +61,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -53,6 +73,26 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Hidden Google Translate Element */}
+            <div id="google_translate_element" className="hidden"></div>
+            
+            {/* Custom Language Toggle */}
+            <div className="flex items-center bg-white/10 rounded-sm p-1">
+              <button
+                onClick={() => changeLanguage('en')}
+                className={`px-2 py-1 text-xs font-bold rounded-sm transition-colors ${currentLang === 'en' ? 'bg-corporate-gold text-corporate-navy' : 'text-white hover:bg-white/20'}`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => changeLanguage('fr')}
+                className={`px-2 py-1 text-xs font-bold rounded-sm transition-colors ${currentLang === 'fr' ? 'bg-corporate-gold text-corporate-navy' : 'text-white hover:bg-white/20'}`}
+              >
+                FR
+              </button>
+            </div>
+
             <Link
               to="/quote"
               className="bg-corporate-gold text-corporate-navy px-5 py-2 rounded-sm font-semibold text-sm hover:bg-yellow-500 transition-colors flex items-center gap-1"
@@ -62,7 +102,8 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-4">
+            <div id="google_translate_element_mobile" className="hidden"></div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white hover:text-corporate-gold focus:outline-none"
@@ -89,6 +130,25 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            
+            <div className="px-3 py-3 flex items-center gap-2">
+              <span className="text-sm text-gray-400">Language:</span>
+              <div className="flex items-center bg-white/10 rounded-sm p-1">
+                <button
+                  onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
+                  className={`px-3 py-1 text-sm font-bold rounded-sm transition-colors ${currentLang === 'en' ? 'bg-corporate-gold text-corporate-navy' : 'text-white hover:bg-white/20'}`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => { changeLanguage('fr'); setMobileMenuOpen(false); }}
+                  className={`px-3 py-1 text-sm font-bold rounded-sm transition-colors ${currentLang === 'fr' ? 'bg-corporate-gold text-corporate-navy' : 'text-white hover:bg-white/20'}`}
+                >
+                  FR
+                </button>
+              </div>
+            </div>
+
             <Link
               to="/quote"
               onClick={() => setMobileMenuOpen(false)}

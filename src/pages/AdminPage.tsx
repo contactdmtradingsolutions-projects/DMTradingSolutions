@@ -12,7 +12,13 @@ export default function AdminPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Tabs State
-  const [activeTab, setActiveTab] = useState<'home' | 'about' | 'services' | 'industries' | 'markets' | 'contact' | 'blog'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'about' | 'services' | 'industries' | 'markets' | 'contact' | 'blog' | 'settings'>('home');
+
+  // Settings State
+  const [corporateNavy, setCorporateNavy] = useState('#0A192F');
+  const [corporateBlue, setCorporateBlue] = useState('#112240');
+  const [corporateGold, setCorporateGold] = useState('#D4AF37');
+  const [corporateLight, setCorporateLight] = useState('#F8F9FA');
 
   // Home Page Content State
   const [homeTitle, setHomeTitle] = useState('');
@@ -145,6 +151,16 @@ export default function AdminPage() {
       const postsSnapshot = await getDocs(collection(db, 'blogPosts'));
       const postsData = postsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setBlogPosts(postsData);
+
+      // Fetch Settings
+      const settingsDoc = await getDoc(doc(db, 'settings', 'colors'));
+      if (settingsDoc.exists()) {
+        const data = settingsDoc.data();
+        setCorporateNavy(data.corporateNavy || '#0A192F');
+        setCorporateBlue(data.corporateBlue || '#112240');
+        setCorporateGold(data.corporateGold || '#D4AF37');
+        setCorporateLight(data.corporateLight || '#F8F9FA');
+      }
     } catch (err: any) {
       console.error("Error fetching content:", err);
       setError("Failed to load content. You might not have admin permissions.");
@@ -233,6 +249,14 @@ export default function AdminPage() {
           image: blogImage
         }, { merge: true });
         setSuccess("Blog page content saved successfully!");
+      } else if (activeTab === 'settings') {
+        await setDoc(doc(db, 'settings', 'colors'), {
+          corporateNavy,
+          corporateBlue,
+          corporateGold,
+          corporateLight
+        }, { merge: true });
+        setSuccess("Website colors saved successfully!");
       }
       
       setTimeout(() => setSuccess(null), 3000);
@@ -389,6 +413,7 @@ export default function AdminPage() {
                 { id: 'markets', label: 'Markets' },
                 { id: 'blog', label: 'Blog' },
                 { id: 'contact', label: 'Contact' },
+                { id: 'settings', label: 'Settings' },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -1013,6 +1038,99 @@ export default function AdminPage() {
                         </ul>
                       </div>
                     )}
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'settings' && (
+                <>
+                  <h2 className="text-lg font-medium text-gray-900 mb-4">Website Colors</h2>
+                  <p className="text-sm text-gray-500 mb-6">Change the global color palette of the website. Changes will apply immediately.</p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="corporateNavy" className="block text-sm font-medium text-gray-700">
+                        Corporate Navy (Primary Dark)
+                      </label>
+                      <div className="mt-1 flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="corporateNavy"
+                          className="h-10 w-10 border border-gray-300 rounded-md cursor-pointer"
+                          value={corporateNavy}
+                          onChange={(e) => setCorporateNavy(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={corporateNavy}
+                          onChange={(e) => setCorporateNavy(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="corporateBlue" className="block text-sm font-medium text-gray-700">
+                        Corporate Blue (Secondary Dark)
+                      </label>
+                      <div className="mt-1 flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="corporateBlue"
+                          className="h-10 w-10 border border-gray-300 rounded-md cursor-pointer"
+                          value={corporateBlue}
+                          onChange={(e) => setCorporateBlue(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={corporateBlue}
+                          onChange={(e) => setCorporateBlue(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="corporateGold" className="block text-sm font-medium text-gray-700">
+                        Corporate Gold (Accent)
+                      </label>
+                      <div className="mt-1 flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="corporateGold"
+                          className="h-10 w-10 border border-gray-300 rounded-md cursor-pointer"
+                          value={corporateGold}
+                          onChange={(e) => setCorporateGold(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={corporateGold}
+                          onChange={(e) => setCorporateGold(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="corporateLight" className="block text-sm font-medium text-gray-700">
+                        Corporate Light (Background)
+                      </label>
+                      <div className="mt-1 flex items-center space-x-2">
+                        <input
+                          type="color"
+                          id="corporateLight"
+                          className="h-10 w-10 border border-gray-300 rounded-md cursor-pointer"
+                          value={corporateLight}
+                          onChange={(e) => setCorporateLight(e.target.value)}
+                        />
+                        <input
+                          type="text"
+                          className="shadow-sm focus:ring-corporate-gold focus:border-corporate-gold block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+                          value={corporateLight}
+                          onChange={(e) => setCorporateLight(e.target.value)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}

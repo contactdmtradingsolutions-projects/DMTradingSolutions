@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+import SuccessModal from './SuccessModal';
 
 export default function Contact() {
   const [title, setTitle] = useState('Get in Touch with Our Team');
@@ -12,6 +14,9 @@ export default function Contact() {
   const [hours, setHours] = useState('Mon-Fri, 8am-5pm SAST');
   const [email1, setEmail1] = useState('info@dmtradingsolutions.com');
   const [email2, setEmail2] = useState('sales@dmtradingsolutions.com');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, 'content', 'contact'), (docSnap) => {
@@ -38,12 +43,33 @@ export default function Contact() {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message. We will get back to you shortly.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("https://formspree.io/f/xgonvaaa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setIsModalOpen(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        console.error("Failed to send message");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    navigate('/');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -119,7 +145,7 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-white p-8 rounded-sm shadow-xl border border-gray-100">
             <h3 className="text-2xl font-heading font-bold text-corporate-navy mb-6">Send us a Message</h3>
-            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
@@ -127,6 +153,8 @@ export default function Contact() {
                     type="text"
                     id="name"
                     name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                     placeholder="John Doe"
@@ -138,6 +166,8 @@ export default function Contact() {
                     type="email"
                     id="email"
                     name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                     placeholder="john@company.com"
@@ -150,6 +180,8 @@ export default function Contact() {
                   type="text"
                   id="subject"
                   name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
                   required
                   className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow"
                   placeholder="How can we help you?"
@@ -160,6 +192,8 @@ export default function Contact() {
                 <textarea
                   id="message"
                   name="message"
+                  value={formData.message}
+                  onChange={handleChange}
                   required
                   rows={5}
                   className="w-full px-4 py-3 rounded-sm border border-gray-300 focus:ring-2 focus:ring-corporate-gold focus:border-transparent outline-none transition-shadow resize-none"
@@ -168,14 +202,20 @@ export default function Contact() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-corporate-navy text-white px-6 py-4 rounded-sm font-bold text-lg hover:bg-corporate-blue transition-colors flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-corporate-navy text-white px-6 py-4 rounded-sm font-bold text-lg hover:bg-corporate-blue transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                Send Message <Send className="h-5 w-5" />
+                {isSubmitting ? 'Sending...' : 'Send Message'} <Send className="h-5 w-5" />
               </button>
             </form>
           </div>
         </div>
       </div>
+      <SuccessModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        message="Thank you for your message. We will get back to you shortly." 
+      />
     </section>
   );
 }

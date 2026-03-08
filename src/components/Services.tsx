@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShoppingCart, Search, Ship, CheckCircle, Truck, X, ArrowLeft } from 'lucide-react';
+import { ShoppingCart, Search, Ship, CheckCircle, Truck, X, ArrowLeft, Briefcase } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 
@@ -56,6 +56,12 @@ export default function Services() {
       shortDescription: 'Assisting with transportation planning and cross-border logistics, specializing in routes between South Africa and the Democratic Republic of the Congo.',
       fullDescription: 'Moving goods across the African continent requires specialized knowledge and reliable partners. Our Logistics Coordination service takes the headache out of transportation planning. We specialize in managing complex freight routes, particularly the busy corridors between South Africa and the Democratic Republic of the Congo. We select the most efficient and cost-effective transport methods—whether by road, rail, or sea—and coordinate with trusted carriers. Our team tracks your shipments in real-time, proactively managing any potential delays at border crossings or ports. From the supplier’s warehouse to your final destination, we ensure your goods arrive safely, on time, and within budget.',
       icon: <Truck className="h-8 w-8" />,
+    },
+    {
+      title: 'Company Registration in SA',
+      shortDescription: 'Professional assistance with registering your company in South Africa, ensuring full legal compliance for local and international clients.',
+      fullDescription: 'We provide seamless company registration services in South Africa for local and international entrepreneurs. Our expert team handles all legalities, ensuring your business is fully compliant and ready to operate. We register:\n\n• Private Companies (PTY LTD)\n• Non-Profit Companies (NPC)\n• Personal Liability Companies (Inc.)\n• External/Foreign Branch Companies\n\nLet us simplify the process so you can focus on growing your business.',
+      icon: <Briefcase className="h-8 w-8" />,
     },
   ];
 
@@ -151,9 +157,9 @@ export default function Services() {
               </div>
               
               <div className="p-8">
-                <p className="text-gray-700 text-lg leading-relaxed mb-8">
+                <div className="text-gray-700 text-lg leading-relaxed mb-8 whitespace-pre-wrap">
                   {services[selectedService].fullDescription}
-                </p>
+                </div>
                 <div className="flex justify-end">
                   <button
                     onClick={() => setSelectedService(null)}

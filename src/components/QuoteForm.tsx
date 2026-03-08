@@ -1,19 +1,46 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import SuccessModal from './SuccessModal';
 
 export default function QuoteForm() {
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormStatus('submitting');
-    // Simulate form submission
-    setTimeout(() => {
-      setFormStatus('success');
-      // Reset after 3 seconds
-      setTimeout(() => setFormStatus('idle'), 3000);
-    }, 1500);
+    setIsSubmitting(true);
+    
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch("https://formspree.io/f/xgonvaaa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (response.ok) {
+        setIsModalOpen(true);
+        form.reset();
+      } else {
+        console.error("Failed to send request");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    navigate('/');
   };
 
   return (
@@ -67,7 +94,7 @@ export default function QuoteForm() {
             transition={{ duration: 0.6 }}
             className="bg-white rounded-sm p-8 shadow-2xl"
           >
-            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">Company Name *</label>
@@ -147,14 +174,20 @@ export default function QuoteForm() {
 
               <button
                 type="submit"
-                className="w-full bg-corporate-gold text-corporate-navy py-4 rounded-sm font-bold text-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-corporate-gold text-corporate-navy py-4 rounded-sm font-bold text-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                Submit Request <Send className="h-5 w-5" />
+                {isSubmitting ? 'Submitting...' : 'Submit Request'} <Send className="h-5 w-5" />
               </button>
             </form>
           </motion.div>
         </div>
       </div>
+      <SuccessModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        message="Thank you for your request. We will get back to you with a tailored solution shortly." 
+      />
     </section>
   );
 }

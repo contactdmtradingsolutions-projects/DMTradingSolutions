@@ -1,9 +1,14 @@
 import React from 'react';
 import PageHero from '../components/PageHero';
+import SEO from '../components/SEO';
 
 export default function TermsOfServicePage() {
   return (
     <>
+      <SEO 
+        title="Terms of Service" 
+        description="Read the Terms of Service for DM Trading Solutions, governing your use of our website and services."
+      />
       <PageHero 
         title="Terms of Service" 
         subtitle="The rules and guidelines for using our services."

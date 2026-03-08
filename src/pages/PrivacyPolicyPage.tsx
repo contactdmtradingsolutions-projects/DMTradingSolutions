@@ -1,9 +1,14 @@
 import React from 'react';
 import PageHero from '../components/PageHero';
+import SEO from '../components/SEO';
 
 export default function PrivacyPolicyPage() {
   return (
     <>
+      <SEO 
+        title="Privacy Policy" 
+        description="Read the Privacy Policy of DM Trading Solutions to understand how we collect, use, and protect your data."
+      />
       <PageHero 
         title="Privacy Policy" 
         subtitle="How we collect, use, and protect your data."

@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from './firebase';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -23,6 +25,20 @@ import TermsOfServicePage from './pages/TermsOfServicePage';
 import WhatsAppButton from './components/WhatsAppButton';
 
 export default function App() {
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'settings', 'colors'), (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        const root = document.documentElement;
+        if (data.corporateNavy) root.style.setProperty('--color-corporate-navy', data.corporateNavy);
+        if (data.corporateBlue) root.style.setProperty('--color-corporate-blue', data.corporateBlue);
+        if (data.corporateGold) root.style.setProperty('--color-corporate-gold', data.corporateGold);
+        if (data.corporateLight) root.style.setProperty('--color-corporate-light', data.corporateLight);
+      }
+    });
+    return () => unsub();
+  }, []);
+
   return (
     <Router>
       <ScrollToTop />

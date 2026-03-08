@@ -80,9 +80,24 @@
         "link": { "type": "string" }
       },
       "required": ["title", "date", "author", "excerpt", "image", "content"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "description": "Global website settings like colors.",
+      "type": "object",
+      "properties": {
+        "corporateNavy": { "type": "string" },
+        "corporateBlue": { "type": "string" },
+        "corporateGold": { "type": "string" },
+        "corporateLight": { "type": "string" }
+      }
     }
   },
   "firestore": {
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/Settings" },
+      "description": "Stores global website settings."
+    },
     "/content/{pageId}": {
       "schema": { "$ref": "#/entities/PageContent" },
       "description": "Stores content for different pages (e.g., home, about, services)."

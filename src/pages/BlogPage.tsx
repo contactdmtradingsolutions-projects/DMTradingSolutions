@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import { doc, onSnapshot, collection } from 'firebase/firestore';
 import { db } from '../firebase';
+import SEO from '../components/SEO';
 
 export default function BlogPage() {
   const [title, setTitle] = useState('Industry Insights');
@@ -34,6 +35,11 @@ export default function BlogPage() {
 
   return (
     <>
+      <SEO 
+        title={title} 
+        description={subtitle}
+        keywords="procurement blog, supply chain news, African trade insights, logistics articles"
+      />
       <PageHero 
         title={title} 
         subtitle={subtitle}

@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Globe, Linkedin, Twitter, Facebook } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import SuccessModal from './SuccessModal';
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("https://formspree.io/f/xgonvaaa", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      if (response.ok) {
+        setIsModalOpen(true);
+        setEmail('');
+      } else {
+        console.error("Failed to subscribe");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    navigate('/');
+  };
+
   return (
     <footer className="bg-corporate-blue text-gray-300 pt-20 pb-10 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -46,19 +81,22 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-heading font-bold text-lg mb-6">Newsletter</h4>
             <p className="text-sm mb-4">Subscribe to receive updates on African trade and procurement insights.</p>
-            <form action="https://formspree.io/f/xgonvaaa" method="POST" className="flex">
+            <form onSubmit={handleSubmit} className="flex">
               <input
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
                 required
                 className="bg-corporate-navy border border-gray-700 text-white px-4 py-2 w-full rounded-l-sm focus:outline-none focus:border-corporate-gold text-sm"
               />
               <button
                 type="submit"
-                className="bg-corporate-gold text-corporate-navy px-4 py-2 rounded-r-sm font-semibold hover:bg-yellow-500 transition-colors text-sm"
+                disabled={isSubmitting}
+                className="bg-corporate-gold text-corporate-navy px-4 py-2 rounded-r-sm font-semibold hover:bg-yellow-500 transition-colors text-sm disabled:opacity-50"
               >
-                Subscribe
+                {isSubmitting ? '...' : 'Subscribe'}
               </button>
             </form>
           </div>
@@ -72,6 +110,11 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <SuccessModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        message="Thank you for subscribing to our newsletter!" 
+      />
     </footer>
   );
 }

@@ -1,10 +1,16 @@
 import React from 'react';
 import PageHero from '../components/PageHero';
 import Contact from '../components/Contact';
+import SEO from '../components/SEO';
 
 export default function ContactPage() {
   return (
     <>
+      <SEO 
+        title="Contact Us" 
+        description="Get in touch with DM Trading Solutions team to discuss your procurement, logistics, and company registration needs in South Africa and Africa."
+        keywords="contact DM Trading Solutions, procurement inquiry, logistics support, South Africa contact"
+      />
       <PageHero 
         title="Contact Us" 
         subtitle="Get in touch with our team to discuss your procurement needs."

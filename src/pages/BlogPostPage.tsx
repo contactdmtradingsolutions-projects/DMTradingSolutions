@@ -4,6 +4,7 @@ import { Calendar, User, ArrowLeft } from 'lucide-react';
 import PageHero from '../components/PageHero';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import SEO from '../components/SEO';
 
 export default function BlogPostPage() {
   const { id } = useParams<{ id: string }>();
@@ -55,6 +56,10 @@ export default function BlogPostPage() {
 
   return (
     <div className="bg-corporate-light">
+      <SEO 
+        title={post.title} 
+        description={post.excerpt || post.title}
+      />
       <PageHero 
         title={post.title} 
         subtitle={`${post.date} | ${post.author}`}
