@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User } from 'firebase/auth';
+import { signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, User, browserPopupRedirectResolver } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, getDocs, deleteDoc, addDoc } from 'firebase/firestore';
 import { Save, LogOut, Loader2, AlertCircle, Plus, Edit, Trash2 } from 'lucide-react';
 
@@ -64,6 +64,8 @@ export default function AdminPage() {
   // Blog Posts State
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [editingPost, setEditingPost] = useState<any | null>(null);
+  
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -168,12 +170,23 @@ export default function AdminPage() {
   };
 
   const handleLogin = async () => {
+    if (isLoggingIn) return;
     try {
+      setIsLoggingIn(true);
       setError(null);
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider, browserPopupRedirectResolver);
     } catch (err: any) {
-      setError(err.message);
+      if (err.code === 'auth/cancelled-popup-request' || err.code === 'auth/popup-closed-by-user') {
+        // Ignore or show a friendly message
+        console.log('Login popup was closed by the user.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection and try again.');
+      } else {
+        setError(err.message);
+      }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
@@ -356,9 +369,10 @@ export default function AdminPage() {
           </div>
           <button
             onClick={handleLogin}
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-corporate-navy hover:bg-corporate-navy/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold transition-colors"
+            disabled={isLoggingIn}
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-corporate-navy hover:bg-corporate-navy/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-corporate-gold transition-colors disabled:opacity-50"
           >
-            Sign in with Google
+            {isLoggingIn ? 'Signing in...' : 'Sign in with Google'}
           </button>
           {error && (
             <div className="mt-4 p-4 bg-red-50 rounded-md flex items-start">

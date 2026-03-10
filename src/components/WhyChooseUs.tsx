@@ -27,8 +27,8 @@ export default function WhyChooseUs() {
             className="order-2 lg:order-1 relative"
           >
              <img
-              src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?q=80&w=1994&auto=format&fit=crop"
-              alt="Logistics and supply chain management"
+              src="https://images.pexels.com/photos/6169186/pexels-photo-6169186.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+              alt="Delivery man carrying a package"
               className="w-full h-auto object-cover rounded-sm shadow-xl"
               referrerPolicy="no-referrer"
             />

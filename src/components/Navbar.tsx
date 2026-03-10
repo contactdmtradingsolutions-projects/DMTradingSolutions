@@ -27,12 +27,20 @@ export default function Navbar() {
   }, []);
 
   const changeLanguage = (lang: string) => {
-    const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-    if (select) {
-      select.value = lang;
-      select.dispatchEvent(new Event('change'));
-      setCurrentLang(lang);
+    if (lang === currentLang) return;
+    
+    if (lang === 'en') {
+      // Clear cookies to revert to original language
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${window.location.hostname};`;
+    } else {
+      // Set the cookie manually to ensure it persists
+      document.cookie = `googtrans=/en/${lang}; path=/`;
+      document.cookie = `googtrans=/en/${lang}; path=/; domain=${window.location.hostname}`;
     }
+    
+    // Reload the page to apply the translation robustly without React DOM conflicts
+    window.location.reload();
   };
 
   const navLinks = [
@@ -41,6 +49,7 @@ export default function Navbar() {
     { name: 'Services', href: '/services' },
     { name: 'Industries', href: '/industries' },
     { name: 'Markets', href: '/markets' },
+    { name: 'Partners', href: '/partners' },
     { name: 'Blog', href: '/blog' },
     { name: 'Contact', href: '/contact' },
   ];
@@ -73,12 +82,9 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
-            
-            {/* Hidden Google Translate Element */}
-            <div id="google_translate_element" className="hidden"></div>
-            
+
             {/* Custom Language Toggle */}
-            <div className="flex items-center bg-white/10 rounded-sm p-1">
+            <div className="flex items-center bg-white/10 rounded-sm p-1 notranslate">
               <button
                 onClick={() => changeLanguage('en')}
                 className={`px-2 py-1 text-xs font-bold rounded-sm transition-colors ${currentLang === 'en' ? 'bg-corporate-gold text-corporate-navy' : 'text-white hover:bg-white/20'}`}
@@ -103,7 +109,6 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
-            <div id="google_translate_element_mobile" className="hidden"></div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white hover:text-corporate-gold focus:outline-none"
@@ -130,8 +135,8 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
-            
-            <div className="px-3 py-3 flex items-center gap-2">
+
+            <div className="px-3 py-3 flex items-center gap-2 notranslate">
               <span className="text-sm text-gray-400">Language:</span>
               <div className="flex items-center bg-white/10 rounded-sm p-1">
                 <button
